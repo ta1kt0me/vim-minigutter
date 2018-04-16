@@ -4,7 +4,7 @@ let s:hunk_re = '^@@ -\(\d\+\),\?\(\d*\) +\(\d\+\),\?\(\d*\) @@'
 
 " True for git v1.7.2+.
 function! s:git_supports_command_line_config_override() abort
-  call system(g:gitgutter_git_executable.' -c foo.bar=baz --version')
+  call system(g:minigutter_git_executable.' -c foo.bar=baz --version')
   return !v:shell_error
 endfunction
 
@@ -57,13 +57,13 @@ let s:temp_buffer = tempname()
 " When writing the temporary files we preserve the original file's extension
 " so that repos using .gitattributes to control EOL conversion continue to
 " convert correctly.
-function! gitgutter#diff#run_diff(bufnr, preserve_full_diff) abort
-  while gitgutter#utility#repo_path(a:bufnr, 0) == -1
+function! minigutter#diff#run_diff(bufnr, preserve_full_diff) abort
+  while minigutter#utility#repo_path(a:bufnr, 0) == -1
     sleep 5m
   endwhile
 
-  if gitgutter#utility#repo_path(a:bufnr, 0) == -2
-    throw 'gitgutter not tracked'
+  if minigutter#utility#repo_path(a:bufnr, 0) == -2
+    throw 'minigutter not tracked'
   endif
 
 
@@ -80,37 +80,37 @@ function! gitgutter#diff#run_diff(bufnr, preserve_full_diff) abort
   let index_file = s:temp_index.'.'.a:bufnr
 
   " Without the buffer number, buff_file would have a race between the
-  " second gitgutter#process_buffer() writing the file (synchronously, below)
-  " and the first gitgutter#process_buffer()'s async job reading it (with
+  " second minigutter#process_buffer() writing the file (synchronously, below)
+  " and the first minigutter#process_buffer()'s async job reading it (with
   " git-diff).
   let buff_file = s:temp_buffer.'.'.a:bufnr
 
-  let extension = gitgutter#utility#extension(a:bufnr)
+  let extension = minigutter#utility#extension(a:bufnr)
   if !empty(extension)
     let index_file .= '.'.extension
     let buff_file .= '.'.extension
   endif
 
   " Write file from index to temporary file.
-  let index_name = g:gitgutter_diff_base.':'.gitgutter#utility#repo_path(a:bufnr, 1)
-  let cmd .= g:gitgutter_git_executable.' --no-pager show '.index_name.' > '.index_file.' && '
+  let index_name = g:minigutter_diff_base.':'.minigutter#utility#repo_path(a:bufnr, 1)
+  let cmd .= g:minigutter_git_executable.' --no-pager show '.index_name.' > '.index_file.' && '
 
   " Write buffer to temporary file.
   " Note: this is synchronous.
   call s:write_buffer(a:bufnr, buff_file)
 
   " Call git-diff with the temporary files.
-  let cmd .= g:gitgutter_git_executable.' --no-pager'
+  let cmd .= g:minigutter_git_executable.' --no-pager'
   if s:c_flag
     let cmd .= ' -c "diff.autorefreshindex=0"'
     let cmd .= ' -c "diff.noprefix=false"'
     let cmd .= ' -c "core.safecrlf=false"'
   endif
-  let cmd .= ' diff --no-ext-diff --no-color -U0 '.g:gitgutter_diff_args.' -- '.index_file.' '.buff_file
+  let cmd .= ' diff --no-ext-diff --no-color -U0 '.g:minigutter_diff_args.' -- '.index_file.' '.buff_file
 
   " Pipe git-diff output into grep.
-  if !a:preserve_full_diff && !empty(g:gitgutter_grep)
-    let cmd .= ' | '.g:gitgutter_grep.' '.gitgutter#utility#shellescape('^@@ ')
+  if !a:preserve_full_diff && !empty(g:minigutter_grep)
+    let cmd .= ' | '.g:minigutter_grep.' '.minigutter#utility#shellescape('^@@ ')
   endif
 
   " grep exits with 1 when no matches are found; git-diff exits with 1 when
@@ -121,21 +121,21 @@ function! gitgutter#diff#run_diff(bufnr, preserve_full_diff) abort
 
   let cmd .= ')'
 
-  let cmd = gitgutter#utility#cd_cmd(a:bufnr, cmd)
+  let cmd = minigutter#utility#cd_cmd(a:bufnr, cmd)
 
-  if g:gitgutter_async && gitgutter#async#available()
-    call gitgutter#async#execute(cmd, a:bufnr, {
-          \   'out': function('gitgutter#diff#handler'),
-          \   'err': function('gitgutter#hunk#reset'),
+  if g:minigutter_async && minigutter#async#available()
+    call minigutter#async#execute(cmd, a:bufnr, {
+          \   'out': function('minigutter#diff#handler'),
+          \   'err': function('minigutter#hunk#reset'),
           \ })
     return 'async'
 
   else
-    let diff = gitgutter#utility#system(cmd)
+    let diff = minigutter#utility#system(cmd)
 
     if v:shell_error
-      call gitgutter#debug#log(diff)
-      throw 'gitgutter diff failed'
+      call minigutter#debug#log(diff)
+      throw 'minigutter diff failed'
     endif
 
     return diff
@@ -143,38 +143,38 @@ function! gitgutter#diff#run_diff(bufnr, preserve_full_diff) abort
 endfunction
 
 
-function! gitgutter#diff#handler(bufnr, diff) abort
-  call gitgutter#debug#log(a:diff)
+function! minigutter#diff#handler(bufnr, diff) abort
+  call minigutter#debug#log(a:diff)
 
-  call gitgutter#hunk#set_hunks(a:bufnr, gitgutter#diff#parse_diff(a:diff))
-  let modified_lines = gitgutter#diff#process_hunks(a:bufnr, gitgutter#hunk#hunks(a:bufnr))
+  call minigutter#hunk#set_hunks(a:bufnr, minigutter#diff#parse_diff(a:diff))
+  let modified_lines = minigutter#diff#process_hunks(a:bufnr, minigutter#hunk#hunks(a:bufnr))
 
   let signs_count = len(modified_lines)
-  if signs_count > g:gitgutter_max_signs
-    call gitgutter#utility#warn_once(a:bufnr, printf(
-          \ 'exceeded maximum number of signs (%d > %d, configured by g:gitgutter_max_signs).',
-          \ signs_count, g:gitgutter_max_signs), 'max_signs')
-    call gitgutter#sign#clear_signs(a:bufnr)
+  if signs_count > g:minigutter_max_signs
+    call minigutter#utility#warn_once(a:bufnr, printf(
+          \ 'exceeded maximum number of signs (%d > %d, configured by g:minigutter_max_signs).',
+          \ signs_count, g:minigutter_max_signs), 'max_signs')
+    call minigutter#sign#clear_signs(a:bufnr)
 
   else
-    if g:gitgutter_signs || g:gitgutter_highlight_lines
-      call gitgutter#sign#update_signs(a:bufnr, modified_lines)
+    if g:minigutter_signs || g:minigutter_highlight_lines
+      call minigutter#sign#update_signs(a:bufnr, modified_lines)
     endif
   endif
 
   call s:save_last_seen_change(a:bufnr)
   if exists('#User#GitGutter')
-    let g:gitgutter_hook_context = {'bufnr': a:bufnr}
+    let g:minigutter_hook_context = {'bufnr': a:bufnr}
     execute 'doautocmd' s:nomodeline 'User GitGutter'
-    unlet g:gitgutter_hook_context
+    unlet g:minigutter_hook_context
   endif
 endfunction
 
 
-function! gitgutter#diff#parse_diff(diff) abort
+function! minigutter#diff#parse_diff(diff) abort
   let hunks = []
   for line in split(a:diff, '\n')
-    let hunk_info = gitgutter#diff#parse_hunk(line)
+    let hunk_info = minigutter#diff#parse_hunk(line)
     if len(hunk_info) == 4
       call add(hunks, hunk_info)
     endif
@@ -182,7 +182,7 @@ function! gitgutter#diff#parse_diff(diff) abort
   return hunks
 endfunction
 
-function! gitgutter#diff#parse_hunk(line) abort
+function! minigutter#diff#parse_hunk(line) abort
   let matches = matchlist(a:line, s:hunk_re)
   if len(matches) > 0
     let from_line  = str2nr(matches[1])
@@ -197,7 +197,7 @@ endfunction
 
 " This function is public so it may be used by other plugins
 " e.g. vim-signature.
-function! gitgutter#diff#process_hunks(bufnr, hunks) abort
+function! minigutter#diff#process_hunks(bufnr, hunks) abort
   let modified_lines = []
   for hunk in a:hunks
     call extend(modified_lines, s:process_hunk(a:bufnr, hunk))
@@ -215,25 +215,25 @@ function! s:process_hunk(bufnr, hunk) abort
 
   if s:is_added(from_count, to_count)
     call s:process_added(modifications, from_count, to_count, to_line)
-    call gitgutter#hunk#increment_lines_added(a:bufnr, to_count)
+    call minigutter#hunk#increment_lines_added(a:bufnr, to_count)
 
   elseif s:is_removed(from_count, to_count)
     call s:process_removed(modifications, from_count, to_count, to_line)
-    call gitgutter#hunk#increment_lines_removed(a:bufnr, from_count)
+    call minigutter#hunk#increment_lines_removed(a:bufnr, from_count)
 
   elseif s:is_modified(from_count, to_count)
     call s:process_modified(modifications, from_count, to_count, to_line)
-    call gitgutter#hunk#increment_lines_modified(a:bufnr, to_count)
+    call minigutter#hunk#increment_lines_modified(a:bufnr, to_count)
 
   elseif s:is_modified_and_added(from_count, to_count)
     call s:process_modified_and_added(modifications, from_count, to_count, to_line)
-    call gitgutter#hunk#increment_lines_added(a:bufnr, to_count - from_count)
-    call gitgutter#hunk#increment_lines_modified(a:bufnr, from_count)
+    call minigutter#hunk#increment_lines_added(a:bufnr, to_count - from_count)
+    call minigutter#hunk#increment_lines_modified(a:bufnr, from_count)
 
   elseif s:is_modified_and_removed(from_count, to_count)
     call s:process_modified_and_removed(modifications, from_count, to_count, to_line)
-    call gitgutter#hunk#increment_lines_modified(a:bufnr, to_count)
-    call gitgutter#hunk#increment_lines_removed(a:bufnr, from_count - to_count)
+    call minigutter#hunk#increment_lines_modified(a:bufnr, to_count)
+    call minigutter#hunk#increment_lines_removed(a:bufnr, from_count - to_count)
 
   endif
   return modifications
@@ -311,15 +311,15 @@ endfunction
 
 
 " Returns a diff for the current hunk.
-function! gitgutter#diff#hunk_diff(bufnr, full_diff)
+function! minigutter#diff#hunk_diff(bufnr, full_diff)
   let modified_diff = []
   let keep_line = 1
   " Don't keepempty when splitting because the diff we want may not be the
   " final one.  Instead add trailing NL at end of function.
   for line in split(a:full_diff, '\n')
-    let hunk_info = gitgutter#diff#parse_hunk(line)
+    let hunk_info = minigutter#diff#parse_hunk(line)
     if len(hunk_info) == 4  " start of new hunk
-      let keep_line = gitgutter#hunk#cursor_in_hunk(hunk_info)
+      let keep_line = minigutter#hunk#cursor_in_hunk(hunk_info)
     endif
     if keep_line
       call add(modified_diff, line)
@@ -350,7 +350,7 @@ endfunction
 
 
 function! s:save_last_seen_change(bufnr) abort
-  call gitgutter#utility#setbufvar(a:bufnr, 'tick', getbufvar(a:bufnr, 'changedtick'))
+  call minigutter#utility#setbufvar(a:bufnr, 'tick', getbufvar(a:bufnr, 'changedtick'))
 endfunction
 
 

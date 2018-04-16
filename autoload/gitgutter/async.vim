@@ -6,13 +6,13 @@ let s:available = has('nvim') || (
       \   )
       \ )
 
-function! gitgutter#async#available()
+function! minigutter#async#available()
   return s:available
 endfunction
 
 
-function! gitgutter#async#execute(cmd, bufnr, handler) abort
-  call gitgutter#debug#log('[async] '.a:cmd)
+function! minigutter#async#execute(cmd, bufnr, handler) abort
+  call minigutter#debug#log('[async] '.a:cmd)
 
   let options = {
         \   'stdoutbuffer': [],

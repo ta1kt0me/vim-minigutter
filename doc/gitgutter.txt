@@ -1,29 +1,29 @@
-*gitgutter.txt*              A Vim plugin which shows a git diff in the gutter.
+*minigutter.txt*              A Vim plugin which shows a git diff in the gutter.
 
 
                            Vim Git Gutter
 
 
 Author:            Andy Stewart <https://airbladesoftware.com/>
-Plugin Homepage:   <https://github.com/airblade/vim-gitgutter>
+Plugin Homepage:   <https://github.com/airblade/vim-minigutter>
 
 
 ===============================================================================
-CONTENTS                                                            *gitgutter*
+CONTENTS                                                            *minigutter*
 
-  Introduction ................. |gitgutter-introduction|
-  Installation ................. |gitgutter-installation|
-  Commands ..................... |gitgutter-commands|
-  Mappings ..................... |gitgutter-mappings|
-  Autocommand .................. |gitgutter-autocommand|
-  Options ...................... |gitgutter-options|
-  Highlights ................... |gitgutter-highlights|
-  FAQ .......................... |gitgutter-faq|
-  TROUBLESHOOTING .............. |gitgutter-troubleshooting|
+  Introduction ................. |minigutter-introduction|
+  Installation ................. |minigutter-installation|
+  Commands ..................... |minigutter-commands|
+  Mappings ..................... |minigutter-mappings|
+  Autocommand .................. |minigutter-autocommand|
+  Options ...................... |minigutter-options|
+  Highlights ................... |minigutter-highlights|
+  FAQ .......................... |minigutter-faq|
+  TROUBLESHOOTING .............. |minigutter-troubleshooting|
 
 
 ===============================================================================
-INTRODUCTION                                           *gitgutter-introduction*
+INTRODUCTION                                           *minigutter-introduction*
 
 GitGutter is a Vim plugin which shows a git diff in the 'gutter' (sign column).
 It shows which lines have been added, modified, or removed.  You can also
@@ -34,24 +34,24 @@ The signs are always up to date and the plugin never saves your buffer.
 
 
 ===============================================================================
-INSTALLATION                                           *gitgutter-installation*
+INSTALLATION                                           *minigutter-installation*
 
 Pathogen:~
 >
   cd ~/.vim/bundle
-  git clone git://github.com/airblade/vim-gitgutter.git
+  git clone git://github.com/airblade/vim-minigutter.git
 <
 Voom:~
 
 Edit your plugin manifest (`voom edit`) and add:
 >
-  airblade/vim-gitgutter
+  airblade/vim-minigutter
 <
 VimPlug:~
 
 Place this in your .vimrc:
 >
-    Plug 'airblade/vim-gitgutter'
+    Plug 'airblade/vim-minigutter'
 <
 Then run the following in Vim:
 >
@@ -62,7 +62,7 @@ NeoBundle:~
 
 Place this in your .vimrc:
 >
-  NeoBundle 'airblade/vim-gitgutter'
+  NeoBundle 'airblade/vim-minigutter'
 <
 Then run the following in Vim:
 >
@@ -71,117 +71,117 @@ Then run the following in Vim:
 <
 No plugin manager:~
 
-Copy vim-gitgutter's subdirectories into your vim configuration directory:
+Copy vim-minigutter's subdirectories into your vim configuration directory:
 >
-  cd tmp && git clone git://github.com/airblade/vim-gitgutter.git
-  cp vim-gitgutter/* ~/.vim/
+  cd tmp && git clone git://github.com/airblade/vim-minigutter.git
+  cp vim-minigutter/* ~/.vim/
 <
 See |add-global-plugin|.
 
 
 ===============================================================================
-COMMANDS                                                   *gitgutter-commands*
+COMMANDS                                                   *minigutter-commands*
 
-Commands for turning vim-gitgutter on and off:~
+Commands for turning vim-minigutter on and off:~
 
-                                                  *gitgutter-:GitGutterDisable*
-:GitGutterDisable       Turn vim-gitgutter off for all buffers.
+                                                  *minigutter-:GitGutterDisable*
+:GitGutterDisable       Turn vim-minigutter off for all buffers.
 
-                                                   *gitgutter-:GitGutterEnable*
-:GitGutterEnable        Turn vim-gitgutter on for all buffers.
+                                                   *minigutter-:GitGutterEnable*
+:GitGutterEnable        Turn vim-minigutter on for all buffers.
 
-                                                   *gitgutter-:GitGutterToggle*
-:GitGutterToggle        Toggle vim-gitgutter on or off for all buffers.
+                                                   *minigutter-:GitGutterToggle*
+:GitGutterToggle        Toggle vim-minigutter on or off for all buffers.
 
-                                                         *gitgutter-:GitGutter*
+                                                         *minigutter-:GitGutter*
 :GitGutter              Update signs for the current buffer.  You shouldn't
                         need to run this.
 
-                                                      *gitgutter-:GitGutterAll*
+                                                      *minigutter-:GitGutterAll*
 :GitGutterAll           Update signs for all buffers.  You shouldn't need to
                         run this.
 
 
 Commands for turning signs on and off (defaults to on):~
 
-                                              *gitgutter-:GitGutterSignsEnable*
+                                              *minigutter-:GitGutterSignsEnable*
 :GitGutterSignsEnable   Show signs for the diff.
 
-                                             *gitgutter-:GitGutterSignsDisable*
+                                             *minigutter-:GitGutterSignsDisable*
 :GitGutterSignsDisable  Do not show signs for the diff.
 
-                                              *gitgutter-:GitGutterSignsToggle*
+                                              *minigutter-:GitGutterSignsToggle*
 :GitGutterSignsToggle   Toggle signs on or off.
 
 
 Commands for turning line highlighting on and off (defaults to off):~
 
-                                     *gitgutter-:GitGutterLineHighlightsEnable*
+                                     *minigutter-:GitGutterLineHighlightsEnable*
 :GitGutterLineHighlightsEnable  Turn on line highlighting.
 
-                                    *gitgutter-:GitGutterLineHighlightsDisable*
+                                    *minigutter-:GitGutterLineHighlightsDisable*
 :GitGutterLineHighlightsDisable Turn off line highlighting.
 
-                                     *gitgutter-:GitGutterLineHighlightsToggle*
+                                     *minigutter-:GitGutterLineHighlightsToggle*
 :GitGutterLineHighlightsToggle  Turn line highlighting on or off.
 
 
 Commands for jumping between hunks:~
 
-                                                 *gitgutter-:GitGutterNextHunk*
+                                                 *minigutter-:GitGutterNextHunk*
 :GitGutterNextHunk      Jump to the next [count] hunk.
 
-                                                 *gitgutter-:GitGutterPrevHunk*
+                                                 *minigutter-:GitGutterPrevHunk*
 :GitGutterPrevHunk      Jump to the previous [count] hunk.
 
 
 Commands for operating on a hunk:~
 
-                                                *gitgutter-:GitGutterStageHunk*
+                                                *minigutter-:GitGutterStageHunk*
 :GitGutterStageHunk     Stage the hunk the cursor is in.
 
-                                                 *gitgutter-:GitGutterUndoHunk*
+                                                 *minigutter-:GitGutterUndoHunk*
 :GitGutterUndoHunk      Undo the hunk the cursor is in.
 
-                                              *gitgutter-:GitGutterPreviewHunk*
+                                              *minigutter-:GitGutterPreviewHunk*
 :GitGutterPreviewHunk   Preview the hunk the cursor is in.
                         Use |:pclose| or |CTRL-W_CTRL-Z| to close the preview
                         window.
 
 
 ===============================================================================
-AUTOCOMMAND                                             *gitgutter-autocommand*
+AUTOCOMMAND                                             *minigutter-autocommand*
 
 User GitGutter~
 
-After updating a buffer's signs vim-gitgutter fires a |User| |autocmd| with the
+After updating a buffer's signs vim-minigutter fires a |User| |autocmd| with the
 event GitGutter.  You can listen for this event, for example:
 >
   autocmd User GitGutter call updateMyStatusLine()
 <
-A dictionary `g:gitgutter_hook_context` is made available during its execution,
+A dictionary `g:minigutter_hook_context` is made available during its execution,
 which contains an entry `bufnr` that contains the buffer number being updated.
 
 
 ===============================================================================
-MAPPINGS                                                   *gitgutter-mappings*
+MAPPINGS                                                   *minigutter-mappings*
 
 You can disable all these mappings with:
 >
-    let g:gitgutter_map_keys = 0
+    let g:minigutter_map_keys = 0
 <
 
 Hunk operations:~
 
 These can be repeated with `.` if you have vim-repeat installed.
 
-                                                         *gitgutter-<Leader>hp*
+                                                         *minigutter-<Leader>hp*
 <Leader>hp              Preview the hunk under the cursor.
 
-                                                         *gitgutter-<Leader>hs*
+                                                         *minigutter-<Leader>hs*
 <Leader>hs              Stage the hunk under the cursor.
 
-                                                         *gitgutter-<Leader>hu*
+                                                         *minigutter-<Leader>hu*
 <Leader>hu              Undo the hunk under the cursor.
 
 You can change these mappings like this:
@@ -193,10 +193,10 @@ You can change these mappings like this:
 
 Hunk jumping:~
 
-                                                                 *gitgutter-]c*
+                                                                 *minigutter-]c*
 ]c                      Jump to the next [count] hunk.
 
-                                                                 *gitgutter-[c*
+                                                                 *minigutter-[c*
 [c                      Jump to the previous [count] hunk.
 
 You can change these mappings like this:
@@ -207,7 +207,7 @@ You can change these mappings like this:
 
 Hunk text object:~
 
-                          *gitgutter-ic* *gitgutter-ac* *gitgutter-text-object*
+                          *minigutter-ic* *minigutter-ac* *minigutter-text-object*
 "ic" operates on the current hunk's lines.  "ac" does the same but also includes
 trailing empty lines.
 >
@@ -219,7 +219,7 @@ trailing empty lines.
 
 
 ===============================================================================
-OPTIONS                                                     *gitgutter-options*
+OPTIONS                                                     *minigutter-options*
 
 The most important option is 'updatetime' which determines how long (in
 milliseconds) the plugin will wait after you stop typing before it updates the
@@ -231,63 +231,63 @@ Most important option:~
 
 Git:~
 
-    |g:gitgutter_git_executable|
-    |g:gitgutter_diff_args|
-    |g:gitgutter_diff_base|
+    |g:minigutter_git_executable|
+    |g:minigutter_diff_args|
+    |g:minigutter_diff_base|
 
 Grep:~
 
-    |g:gitgutter_grep|
+    |g:minigutter_grep|
 
 Signs:~
 
-    |g:gitgutter_signs|
-    |g:gitgutter_highlight_lines|
-    |g:gitgutter_max_signs|
-    |g:gitgutter_sign_added|
-    |g:gitgutter_sign_modified|
-    |g:gitgutter_sign_removed|
-    |g:gitgutter_sign_removed_first_line|
-    |g:gitgutter_sign_modified_removed|
-    |g:gitgutter_sign_column_always|
-    |g:gitgutter_override_sign_column_highlight|
+    |g:minigutter_signs|
+    |g:minigutter_highlight_lines|
+    |g:minigutter_max_signs|
+    |g:minigutter_sign_added|
+    |g:minigutter_sign_modified|
+    |g:minigutter_sign_removed|
+    |g:minigutter_sign_removed_first_line|
+    |g:minigutter_sign_modified_removed|
+    |g:minigutter_sign_column_always|
+    |g:minigutter_override_sign_column_highlight|
 
 Terminal:~
 
-    |g:gitgutter_terminal_reports_focus|
+    |g:minigutter_terminal_reports_focus|
 
 General:~
 
-    |g:gitgutter_enabled|
-    |g:gitgutter_map_keys|
-    |g:gitgutter_async|
-    |g:gitgutter_log|
+    |g:minigutter_enabled|
+    |g:minigutter_map_keys|
+    |g:minigutter_async|
+    |g:minigutter_log|
 
 
-                                                   *g:gitgutter_git_executable*
+                                                   *g:minigutter_git_executable*
 Default: 'git'
 
 This option determines what git binary to use.  Set this if git is not on your
 path.
 
-                                                        *g:gitgutter_diff_args*
+                                                        *g:minigutter_diff_args*
 Default: empty
 
 Use this option to pass any extra arguments to git-diff.  For example:
 >
-    let g:gitgutter_diff_args = '-w'
+    let g:minigutter_diff_args = '-w'
 <
 
-                                                        *g:gitgutter_diff_base*
+                                                        *g:minigutter_diff_base*
 Default: empty
 
 By default buffers are diffed against the index.  Use this option to diff against
 a revision instead.  For example:
 >
-    let g:gitgutter_diff_base = '<some commit SHA>'
+    let g:minigutter_diff_base = '<some commit SHA>'
 <
 
-                                                             *g:gitgutter_grep*
+                                                             *g:minigutter_grep*
 Default: 'grep'
 
 The plugin pipes the output of git-diff into grep to minimise the amount of data
@@ -296,25 +296,25 @@ vim has to process.  Set this option if grep is not on your path.
 grep must produce plain-text output without any ANSI escape codes or colours.
 Use this option to turn off colours if necessary.
 >
-    let g:gitgutter_grep = 'grep --color=never'
+    let g:minigutter_grep = 'grep --color=never'
 <
 If you do not want to use grep at all (perhaps to debug why signs are not
 showing), set this option to an empty string:
 >
-    let g:gitgutter_grep = ''
+    let g:minigutter_grep = ''
 <
 
-                                                            *g:gitgutter_signs*
+                                                            *g:minigutter_signs*
 Default: 1
 
 Determines whether or not to show signs.
 
-                                                  *g:gitgutter_highlight_lines*
+                                                  *g:minigutter_highlight_lines*
 Default: 0
 
 Determines whether or not to show line highlights.
 
-                                                        *g:gitgutter_max_signs*
+                                                        *g:minigutter_max_signs*
 Default: 500
 
 Sets the maximum number of signs to show in a buffer.  Vim is slow at updating
@@ -322,23 +322,23 @@ signs, so to avoid slowing down the GUI the number of signs is capped.  When
 the number of changed lines exceeds this value, the plugin removes all signs
 and displays a warning message.
 
-                                          *g:gitgutter_sign_added*
-                                          *g:gitgutter_sign_modified*
-                                          *g:gitgutter_sign_removed*
-                                          *g:gitgutter_sign_removed_first_line*
-                                          *g:gitgutter_sign_modified_removed*
+                                          *g:minigutter_sign_added*
+                                          *g:minigutter_sign_modified*
+                                          *g:minigutter_sign_removed*
+                                          *g:minigutter_sign_removed_first_line*
+                                          *g:minigutter_sign_modified_removed*
 Defaults:
 >
-    let g:gitgutter_sign_added              = '+'
-    let g:gitgutter_sign_modified           = '~'
-    let g:gitgutter_sign_removed            = '_'
-    let g:gitgutter_sign_removed_first_line = '‾'
-    let g:gitgutter_sign_modified_removed   = '~_'
+    let g:minigutter_sign_added              = '+'
+    let g:minigutter_sign_modified           = '~'
+    let g:minigutter_sign_removed            = '_'
+    let g:minigutter_sign_removed_first_line = '‾'
+    let g:minigutter_sign_modified_removed   = '~_'
 <
 You can use unicode characters but not images.  Signs must not take up more than
 2 columns.
 
-                                               *g:gitgutter_sign_column_always*
+                                               *g:minigutter_sign_column_always*
 Default: 0
 
 This legacy option controls whether the sign column should always be shown, even
@@ -349,16 +349,16 @@ From Vim 7.4.2201, use 'signcolumn' instead:
     set signcolumn=yes
 <
 
-                                   *g:gitgutter_override_sign_column_highlight*
+                                   *g:minigutter_override_sign_column_highlight*
 Default: 1
 
 Controls whether to make the sign column look like the line-number column (i.e.
 the |hl-LineNr| highlight group).
 
-To customise your sign column's background color, first tell vim-gitgutter to
+To customise your sign column's background color, first tell vim-minigutter to
 leave it alone:
 >
-    let g:gitgutter_override_sign_column_highlight = 0
+    let g:minigutter_override_sign_column_highlight = 0
 <
 
 And then either update your colorscheme's |hlSignColumn| highlight group or set
@@ -370,7 +370,7 @@ it in your |vimrc|:
   User-defined (graphical Vim)        highlight SignColumn guibg={whatever}
 
 
-                                           *g:gitgutter_terminal_reports_focus*
+                                           *g:minigutter_terminal_reports_focus*
 Default: 1
 
 Normally the plugin uses |FocusGained| to force-update all buffers when Vim
@@ -385,31 +385,31 @@ When this option is 0, the plugin force-updates the buffer on |BufEnter|
 (instead of only updating if the buffer's contents has changed since the last
 update).
 
-                                                          *g:gitgutter_enabled*
+                                                          *g:minigutter_enabled*
 Default: 1
 
 Controls whether or not the plugin is on at startup.
 
-                                                         *g:gitgutter_map_keys*
+                                                         *g:minigutter_map_keys*
 Default: 1
 
-Controls whether or not the plugin provides mappings.  See |gitgutter-mapppings|.
+Controls whether or not the plugin provides mappings.  See |minigutter-mapppings|.
 
-                                                            *g:gitgutter_async*
+                                                            *g:minigutter_async*
 Default: 1
 
 Controls whether or not diffs are run in the background.  This has no effect if
 your Vim does not support background jobs.
 
-                                                              *g:gitgutter_log*
+                                                              *g:minigutter_log*
 Default: 0
 
-When switched on, the plugin logs to gitgutter.log in the directory where it is
+When switched on, the plugin logs to minigutter.log in the directory where it is
 installed.  Additionally it logs channel activity to channel.log.
 
 
 ===============================================================================
-HIGHLIGHTS                                               *gitgutter-highlights*
+HIGHLIGHTS                                               *minigutter-highlights*
 
 To change the signs' colours, set up the following highlight groups in your
 colorscheme or |vimrc|:
@@ -437,13 +437,13 @@ colorscheme or |vimrc|:
 
 
 ===============================================================================
-FAQ                                                             *gitgutter-faq*
+FAQ                                                             *minigutter-faq*
 
 a. How do I turn off realtime updates?
 
   Add this to your vim configuration in an |after-directory|:
 >
-    autocmd! gitgutter CursorHold,CursorHoldI
+    autocmd! minigutter CursorHold,CursorHoldI
 <
 b. Why can't I unstage staged changes?
 
@@ -454,23 +454,23 @@ b. Why can't I unstage staged changes?
 c. Why are the colours in the sign column weird?
 
   Your colorscheme is configuring the |hl-SignColumn| highlight group weirdly.
-  Please see |g:gitgutter_override_sign_column_highlight| on customising the
+  Please see |g:minigutter_override_sign_column_highlight| on customising the
   sign column.
 
 d. What happens if I also use another plugin which uses signs (e.g. Syntastic)?
 
-  Vim only allows one sign per line.  Vim-gitgutter will not interfere with
+  Vim only allows one sign per line.  Vim-minigutter will not interfere with
   signs it did not add.
 
 
 ===============================================================================
-TROUBLESHOOTING                                     *gitgutter-troubleshooting*
+TROUBLESHOOTING                                     *minigutter-troubleshooting*
 
 When no signs are showing at all:~
 
 1. Try bypassing grep with:
 >
-    let g:gitgutter_grep = ''
+    let g:minigutter_grep = ''
 <
   If it works, the problem is grep outputting ANSI escape codes.  Use this
   option to pass arguments to grep to turn off the escape codes.
@@ -490,7 +490,7 @@ When no signs are showing at all:~
 
 5. Check whether the plugin thinks git knows about your file:
 >
-    :echo getbufvar('','gitgutter').path
+    :echo getbufvar('','minigutter').path
 <
   If the result is -2, the plugin thinks your file is not tracked by git.
 
@@ -514,6 +514,6 @@ When signs don't update after focusing Vim:~
 Your terminal probably isn't reporting focus events.  Either try installing
 Terminus (https://github.com/wincent/terminus) or set:
 >
-    let g:gitgutter_terminal_reports_focus = 0
+    let g:minigutter_terminal_reports_focus = 0
 <
 

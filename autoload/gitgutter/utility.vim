@@ -1,22 +1,22 @@
-function! gitgutter#utility#supports_overscore_sign()
-  if gitgutter#utility#windows()
+function! minigutter#utility#supports_overscore_sign()
+  if minigutter#utility#windows()
     return &encoding ==? 'utf-8'
   else
     return &termencoding ==? &encoding || &termencoding == ''
   endif
 endfunction
 
-function! gitgutter#utility#setbufvar(buffer, varname, val)
-  let dict = get(getbufvar(a:buffer, ''), 'gitgutter', {})
+function! minigutter#utility#setbufvar(buffer, varname, val)
+  let dict = get(getbufvar(a:buffer, ''), 'minigutter', {})
   let needs_setting = empty(dict)
   let dict[a:varname] = a:val
   if needs_setting
-    call setbufvar(a:buffer, 'gitgutter', dict)
+    call setbufvar(a:buffer, 'minigutter', dict)
   endif
 endfunction
 
-function! gitgutter#utility#getbufvar(buffer, varname, ...)
-  let dict = get(getbufvar(a:buffer, ''), 'gitgutter', {})
+function! minigutter#utility#getbufvar(buffer, varname, ...)
+  let dict = get(getbufvar(a:buffer, ''), 'minigutter', {})
   if has_key(dict, a:varname)
     return dict[a:varname]
   else
@@ -26,18 +26,18 @@ function! gitgutter#utility#getbufvar(buffer, varname, ...)
   endif
 endfunction
 
-function! gitgutter#utility#warn(message) abort
+function! minigutter#utility#warn(message) abort
   echohl WarningMsg
-  echo 'vim-gitgutter: ' . a:message
+  echo 'vim-minigutter: ' . a:message
   echohl None
   let v:warningmsg = a:message
 endfunction
 
-function! gitgutter#utility#warn_once(bufnr, message, key) abort
-  if empty(gitgutter#utility#getbufvar(a:bufnr, a:key))
-    call gitgutter#utility#setbufvar(a:bufnr, a:key, '1')
+function! minigutter#utility#warn_once(bufnr, message, key) abort
+  if empty(minigutter#utility#getbufvar(a:bufnr, a:key))
+    call minigutter#utility#setbufvar(a:bufnr, a:key, '1')
     echohl WarningMsg
-    redraw | echom 'vim-gitgutter: ' . a:message
+    redraw | echom 'vim-minigutter: ' . a:message
     echohl None
     let v:warningmsg = a:message
   endif
@@ -45,8 +45,8 @@ endfunction
 
 " Returns truthy when the buffer's file should be processed; and falsey when it shouldn't.
 " This function does not and should not make any system calls.
-function! gitgutter#utility#is_active(bufnr) abort
-  return g:gitgutter_enabled &&
+function! minigutter#utility#is_active(bufnr) abort
+  return g:minigutter_enabled &&
         \ !pumvisible() &&
         \ s:is_file_buffer(a:bufnr) &&
         \ s:exists_file(a:bufnr) &&
@@ -67,7 +67,7 @@ function! s:winshell()
 endfunction
 
 " From tpope/vim-fugitive
-function! gitgutter#utility#shellescape(arg) abort
+function! minigutter#utility#shellescape(arg) abort
   if a:arg =~ '^[A-Za-z0-9_/.-]\+$'
     return a:arg
   elseif s:winshell()
@@ -77,17 +77,17 @@ function! gitgutter#utility#shellescape(arg) abort
   endif
 endfunction
 
-function! gitgutter#utility#file(bufnr)
+function! minigutter#utility#file(bufnr)
   return s:abs_path(a:bufnr, 1)
 endfunction
 
 " Not shellescaped
-function! gitgutter#utility#extension(bufnr) abort
+function! minigutter#utility#extension(bufnr) abort
   return fnamemodify(s:abs_path(a:bufnr, 0), ':e')
 endfunction
 
-function! gitgutter#utility#system(cmd, ...) abort
-  call gitgutter#debug#log(a:cmd, a:000)
+function! minigutter#utility#system(cmd, ...) abort
+  call minigutter#debug#log(a:cmd, a:000)
 
   call s:use_known_shell()
   silent let output = (a:0 == 0) ? system(a:cmd) : system(a:cmd, a:1)
@@ -102,45 +102,45 @@ endfunction
 " * non-empty string - path
 " *               -1 - pending
 " *               -2 - not tracked by git
-function! gitgutter#utility#repo_path(bufnr, shellesc) abort
-  let p = gitgutter#utility#getbufvar(a:bufnr, 'path')
-  return a:shellesc ? gitgutter#utility#shellescape(p) : p
+function! minigutter#utility#repo_path(bufnr, shellesc) abort
+  let p = minigutter#utility#getbufvar(a:bufnr, 'path')
+  return a:shellesc ? minigutter#utility#shellescape(p) : p
 endfunction
 
-function! gitgutter#utility#set_repo_path(bufnr) abort
+function! minigutter#utility#set_repo_path(bufnr) abort
   " Values of path:
   " * non-empty string - path
   " *               -1 - pending
   " *               -2 - not tracked by git
 
-  call gitgutter#utility#setbufvar(a:bufnr, 'path', -1)
-  let cmd = gitgutter#utility#cd_cmd(a:bufnr, g:gitgutter_git_executable.' ls-files --error-unmatch --full-name '.gitgutter#utility#shellescape(s:filename(a:bufnr)))
+  call minigutter#utility#setbufvar(a:bufnr, 'path', -1)
+  let cmd = minigutter#utility#cd_cmd(a:bufnr, g:minigutter_git_executable.' ls-files --error-unmatch --full-name '.minigutter#utility#shellescape(s:filename(a:bufnr)))
 
-  if g:gitgutter_async && gitgutter#async#available()
+  if g:minigutter_async && minigutter#async#available()
     if has('lambda')
-      call gitgutter#async#execute(cmd, a:bufnr, {
-            \   'out': {bufnr, path -> gitgutter#utility#setbufvar(bufnr, 'path', s:strip_trailing_new_line(path))},
-            \   'err': {bufnr       -> gitgutter#utility#setbufvar(bufnr, 'path', -2)},
+      call minigutter#async#execute(cmd, a:bufnr, {
+            \   'out': {bufnr, path -> minigutter#utility#setbufvar(bufnr, 'path', s:strip_trailing_new_line(path))},
+            \   'err': {bufnr       -> minigutter#utility#setbufvar(bufnr, 'path', -2)},
             \ })
     else
       if has('nvim') && !has('nvim-0.2.0')
-        call gitgutter#async#execute(cmd, a:bufnr, {
+        call minigutter#async#execute(cmd, a:bufnr, {
               \   'out': function('s:set_path'),
               \   'err': function('s:not_tracked_by_git')
               \ })
       else
-        call gitgutter#async#execute(cmd, a:bufnr, {
+        call minigutter#async#execute(cmd, a:bufnr, {
               \   'out': function('s:set_path'),
               \   'err': function('s:set_path', [-2])
               \ })
       endif
     endif
   else
-    let path = gitgutter#utility#system(cmd)
+    let path = minigutter#utility#system(cmd)
     if v:shell_error
-      call gitgutter#utility#setbufvar(a:bufnr, 'path', -2)
+      call minigutter#utility#setbufvar(a:bufnr, 'path', -2)
     else
-      call gitgutter#utility#setbufvar(a:bufnr, 'path', s:strip_trailing_new_line(path))
+      call minigutter#utility#setbufvar(a:bufnr, 'path', s:strip_trailing_new_line(path))
     endif
   endif
 endfunction
@@ -154,14 +154,14 @@ endif
 function! s:set_path(bufnr, path)
   if a:bufnr == -2
     let [bufnr, path] = [a:path, a:bufnr]
-    call gitgutter#utility#setbufvar(bufnr, 'path', path)
+    call minigutter#utility#setbufvar(bufnr, 'path', path)
   else
-    call gitgutter#utility#setbufvar(a:bufnr, 'path', s:strip_trailing_new_line(a:path))
+    call minigutter#utility#setbufvar(a:bufnr, 'path', s:strip_trailing_new_line(a:path))
   endif
 endfunction
 
-function! gitgutter#utility#cd_cmd(bufnr, cmd) abort
-  let cd = s:unc_path(a:bufnr) ? 'pushd' : (gitgutter#utility#windows() ? 'cd /d' : 'cd')
+function! minigutter#utility#cd_cmd(bufnr, cmd) abort
+  let cd = s:unc_path(a:bufnr) ? 'pushd' : (minigutter#utility#windows() ? 'cd /d' : 'cd')
   return cd.' '.s:dir(a:bufnr).' && '.a:cmd
 endfunction
 
@@ -185,11 +185,11 @@ endfunction
 
 function! s:abs_path(bufnr, shellesc)
   let p = resolve(expand('#'.a:bufnr.':p'))
-  return a:shellesc ? gitgutter#utility#shellescape(p) : p
+  return a:shellesc ? minigutter#utility#shellescape(p) : p
 endfunction
 
 function! s:dir(bufnr) abort
-  return gitgutter#utility#shellescape(fnamemodify(s:abs_path(a:bufnr, 0), ':h'))
+  return minigutter#utility#shellescape(fnamemodify(s:abs_path(a:bufnr, 0), ':h'))
 endfunction
 
 " Not shellescaped.
@@ -205,6 +205,6 @@ function! s:strip_trailing_new_line(line) abort
   return substitute(a:line, '\n$', '', '')
 endfunction
 
-function! gitgutter#utility#windows()
+function! minigutter#utility#windows()
   return has('win64') || has('win32') || has('win16')
 endfunction

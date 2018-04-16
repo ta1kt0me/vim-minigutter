@@ -1,10 +1,10 @@
 let s:plugin_dir  = expand('<sfile>:p:h:h:h').'/'
-let s:log_file    = s:plugin_dir.'gitgutter.log'
+let s:log_file    = s:plugin_dir.'minigutter.log'
 let s:channel_log = s:plugin_dir.'channel.log'
 let s:new_log_session = 1
 
 
-function! gitgutter#debug#debug()
+function! minigutter#debug#debug()
   " Open a scratch buffer
   vsplit __GitGutter_Debug__
   normal! ggdG
@@ -47,7 +47,7 @@ function! s:vim_version()
 endfunction
 
 function! s:git_version()
-  let v = system(g:gitgutter_git_executable.' --version')
+  let v = system(g:minigutter_git_executable.' --version')
   call s:output( substitute(v, '\n$', '', '') )
 endfunction
 
@@ -77,9 +77,9 @@ function! s:output(text)
 endfunction
 
 " assumes optional args are calling function's optional args
-function! gitgutter#debug#log(message, ...) abort
-  if g:gitgutter_log
-    if s:new_log_session && gitgutter#async#available()
+function! minigutter#debug#log(message, ...) abort
+  if g:minigutter_log
+    if s:new_log_session && minigutter#async#available()
       if exists('*ch_logfile')
         call ch_logfile(s:channel_log, 'w')
       endif

@@ -1,51 +1,51 @@
-function! gitgutter#hunk#set_hunks(bufnr, hunks) abort
-  call gitgutter#utility#setbufvar(a:bufnr, 'hunks', a:hunks)
+function! minigutter#hunk#set_hunks(bufnr, hunks) abort
+  call minigutter#utility#setbufvar(a:bufnr, 'hunks', a:hunks)
   call s:reset_summary(a:bufnr)
 endfunction
 
-function! gitgutter#hunk#hunks(bufnr) abort
-  return gitgutter#utility#getbufvar(a:bufnr, 'hunks', [])
+function! minigutter#hunk#hunks(bufnr) abort
+  return minigutter#utility#getbufvar(a:bufnr, 'hunks', [])
 endfunction
 
-function! gitgutter#hunk#reset(bufnr) abort
-  call gitgutter#utility#setbufvar(a:bufnr, 'hunks', [])
+function! minigutter#hunk#reset(bufnr) abort
+  call minigutter#utility#setbufvar(a:bufnr, 'hunks', [])
   call s:reset_summary(a:bufnr)
 endfunction
 
 
-function! gitgutter#hunk#summary(bufnr) abort
-  return gitgutter#utility#getbufvar(a:bufnr, 'summary', [0,0,0])
+function! minigutter#hunk#summary(bufnr) abort
+  return minigutter#utility#getbufvar(a:bufnr, 'summary', [0,0,0])
 endfunction
 
 function! s:reset_summary(bufnr) abort
-  call gitgutter#utility#setbufvar(a:bufnr, 'summary', [0,0,0])
+  call minigutter#utility#setbufvar(a:bufnr, 'summary', [0,0,0])
 endfunction
 
-function! gitgutter#hunk#increment_lines_added(bufnr, count) abort
-  let summary = gitgutter#hunk#summary(a:bufnr)
+function! minigutter#hunk#increment_lines_added(bufnr, count) abort
+  let summary = minigutter#hunk#summary(a:bufnr)
   let summary[0] += a:count
-  call gitgutter#utility#setbufvar(a:bufnr, 'summary', summary)
+  call minigutter#utility#setbufvar(a:bufnr, 'summary', summary)
 endfunction
 
-function! gitgutter#hunk#increment_lines_modified(bufnr, count) abort
-  let summary = gitgutter#hunk#summary(a:bufnr)
+function! minigutter#hunk#increment_lines_modified(bufnr, count) abort
+  let summary = minigutter#hunk#summary(a:bufnr)
   let summary[1] += a:count
-  call gitgutter#utility#setbufvar(a:bufnr, 'summary', summary)
+  call minigutter#utility#setbufvar(a:bufnr, 'summary', summary)
 endfunction
 
-function! gitgutter#hunk#increment_lines_removed(bufnr, count) abort
-  let summary = gitgutter#hunk#summary(a:bufnr)
+function! minigutter#hunk#increment_lines_removed(bufnr, count) abort
+  let summary = minigutter#hunk#summary(a:bufnr)
   let summary[2] += a:count
-  call gitgutter#utility#setbufvar(a:bufnr, 'summary', summary)
+  call minigutter#utility#setbufvar(a:bufnr, 'summary', summary)
 endfunction
 
 
-function! gitgutter#hunk#next_hunk(count) abort
+function! minigutter#hunk#next_hunk(count) abort
   let bufnr = bufnr('')
-  if gitgutter#utility#is_active(bufnr)
+  if minigutter#utility#is_active(bufnr)
     let current_line = line('.')
     let hunk_count = 0
-    for hunk in gitgutter#hunk#hunks(bufnr)
+    for hunk in minigutter#hunk#hunks(bufnr)
       if hunk[2] > current_line
         let hunk_count += 1
         if hunk_count == a:count
@@ -54,16 +54,16 @@ function! gitgutter#hunk#next_hunk(count) abort
         endif
       endif
     endfor
-    call gitgutter#utility#warn('No more hunks')
+    call minigutter#utility#warn('No more hunks')
   endif
 endfunction
 
-function! gitgutter#hunk#prev_hunk(count) abort
+function! minigutter#hunk#prev_hunk(count) abort
   let bufnr = bufnr('')
-  if gitgutter#utility#is_active(bufnr)
+  if minigutter#utility#is_active(bufnr)
     let current_line = line('.')
     let hunk_count = 0
-    for hunk in reverse(copy(gitgutter#hunk#hunks(bufnr)))
+    for hunk in reverse(copy(minigutter#hunk#hunks(bufnr)))
       if hunk[2] < current_line
         let hunk_count += 1
         if hunk_count == a:count
@@ -73,7 +73,7 @@ function! gitgutter#hunk#prev_hunk(count) abort
         endif
       endif
     endfor
-    call gitgutter#utility#warn('No previous hunks')
+    call minigutter#utility#warn('No previous hunks')
   endif
 endfunction
 
@@ -83,8 +83,8 @@ function! s:current_hunk() abort
   let bufnr = bufnr('')
   let current_hunk = []
 
-  for hunk in gitgutter#hunk#hunks(bufnr)
-    if gitgutter#hunk#cursor_in_hunk(hunk)
+  for hunk in minigutter#hunk#hunks(bufnr)
+    if minigutter#hunk#cursor_in_hunk(hunk)
       let current_hunk = hunk
       break
     endif
@@ -93,7 +93,7 @@ function! s:current_hunk() abort
   return current_hunk
 endfunction
 
-function! gitgutter#hunk#cursor_in_hunk(hunk) abort
+function! minigutter#hunk#cursor_in_hunk(hunk) abort
   let current_line = line('.')
 
   if current_line == 1 && a:hunk[2] == 0
@@ -107,7 +107,7 @@ function! gitgutter#hunk#cursor_in_hunk(hunk) abort
   return 0
 endfunction
 
-function! gitgutter#hunk#text_object(inner) abort
+function! minigutter#hunk#text_object(inner) abort
   let hunk = s:current_hunk()
 
   if empty(hunk)
@@ -129,17 +129,17 @@ function! gitgutter#hunk#text_object(inner) abort
 endfunction
 
 
-function! gitgutter#hunk#stage() abort
+function! minigutter#hunk#stage() abort
   call s:hunk_op(function('s:stage'))
   silent! call repeat#set("\<Plug>GitGutterStageHunk", -1)<CR>
 endfunction
 
-function! gitgutter#hunk#undo() abort
+function! minigutter#hunk#undo() abort
   call s:hunk_op(function('s:undo'))
   silent! call repeat#set("\<Plug>GitGutterUndoHunk", -1)<CR>
 endfunction
 
-function! gitgutter#hunk#preview() abort
+function! minigutter#hunk#preview() abort
   call s:hunk_op(function('s:preview'))
   silent! call repeat#set("\<Plug>GitGutterPreviewHunk", -1)<CR>
 endfunction
@@ -148,18 +148,18 @@ endfunction
 function! s:hunk_op(op)
   let bufnr = bufnr('')
 
-  if gitgutter#utility#is_active(bufnr)
+  if minigutter#utility#is_active(bufnr)
     " Get a (synchronous) diff.
-    let [async, g:gitgutter_async] = [g:gitgutter_async, 0]
-    let diff = gitgutter#diff#run_diff(bufnr, 1)
-    let g:gitgutter_async = async
+    let [async, g:minigutter_async] = [g:minigutter_async, 0]
+    let diff = minigutter#diff#run_diff(bufnr, 1)
+    let g:minigutter_async = async
 
-    call gitgutter#hunk#set_hunks(bufnr, gitgutter#diff#parse_diff(diff))
+    call minigutter#hunk#set_hunks(bufnr, minigutter#diff#parse_diff(diff))
 
     if empty(s:current_hunk())
-      call gitgutter#utility#warn('cursor is not in a hunk')
+      call minigutter#utility#warn('cursor is not in a hunk')
     else
-      call a:op(gitgutter#diff#hunk_diff(bufnr, diff))
+      call a:op(minigutter#diff#hunk_diff(bufnr, diff))
     endif
   endif
 endfunction
@@ -169,18 +169,18 @@ function! s:stage(hunk_diff)
   let bufnr = bufnr('')
   let diff = s:adjust_header(bufnr, a:hunk_diff)
   " Apply patch to index.
-  call gitgutter#utility#system(
-        \ gitgutter#utility#cd_cmd(bufnr, g:gitgutter_git_executable.' apply --cached --unidiff-zero - '),
+  call minigutter#utility#system(
+        \ minigutter#utility#cd_cmd(bufnr, g:minigutter_git_executable.' apply --cached --unidiff-zero - '),
         \ diff)
 
-  " Refresh gitgutter's view of buffer.
-  call gitgutter#process_buffer(bufnr, 1)
+  " Refresh minigutter's view of buffer.
+  call minigutter#process_buffer(bufnr, 1)
 endfunction
 
 
 function! s:undo(hunk_diff)
   " Apply reverse patch to buffer.
-  let hunk  = gitgutter#diff#parse_hunk(split(a:hunk_diff, '\n')[4])
+  let hunk  = minigutter#diff#parse_hunk(split(a:hunk_diff, '\n')[4])
   let lines = map(split(a:hunk_diff, '\n')[5:], 'v:val[1:]')
   let lnum  = hunk[2]
   let added_only   = hunk[1] == 0 && hunk[3]  > 0
@@ -221,7 +221,7 @@ endfunction
 
 
 function! s:adjust_header(bufnr, hunk_diff)
-  let filepath = gitgutter#utility#repo_path(a:bufnr, 0)
+  let filepath = minigutter#utility#repo_path(a:bufnr, 0)
   return s:adjust_hunk_summary(s:fix_file_references(filepath, a:hunk_diff))
 endfunction
 
@@ -245,7 +245,7 @@ function! s:fix_file_references(filepath, hunk_diff)
 endfunction
 
 if $VIM_GITGUTTER_TEST
-  function! gitgutter#hunk#fix_file_references(filepath, hunk_diff)
+  function! minigutter#hunk#fix_file_references(filepath, hunk_diff)
     return s:fix_file_references(a:filepath, a:hunk_diff)
   endfunction
 endif
@@ -269,8 +269,8 @@ endfunction
 function! s:line_adjustment_for_current_hunk() abort
   let bufnr = bufnr('')
   let adj = 0
-  for hunk in gitgutter#hunk#hunks(bufnr)
-    if gitgutter#hunk#cursor_in_hunk(hunk)
+  for hunk in minigutter#hunk#hunks(bufnr)
+    if minigutter#hunk#cursor_in_hunk(hunk)
       break
     else
       let adj += hunk[1] - hunk[3]

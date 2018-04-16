@@ -2,46 +2,46 @@ let s:t_string = type('')
 
 " Primary functions {{{
 
-function! gitgutter#all(force) abort
+function! minigutter#all(force) abort
   for bufnr in s:uniq(tabpagebuflist())
     let file = expand('#'.bufnr.':p')
     if !empty(file)
-      call gitgutter#init_buffer(bufnr)
-      call gitgutter#process_buffer(bufnr, a:force)
+      call minigutter#init_buffer(bufnr)
+      call minigutter#process_buffer(bufnr, a:force)
     endif
   endfor
 endfunction
 
 
 " Finds the file's path relative to the repo root.
-function! gitgutter#init_buffer(bufnr)
-  if gitgutter#utility#is_active(a:bufnr)
-    let p = gitgutter#utility#repo_path(a:bufnr, 0)
+function! minigutter#init_buffer(bufnr)
+  if minigutter#utility#is_active(a:bufnr)
+    let p = minigutter#utility#repo_path(a:bufnr, 0)
     if type(p) != s:t_string || empty(p)
-      call gitgutter#utility#set_repo_path(a:bufnr)
+      call minigutter#utility#set_repo_path(a:bufnr)
     endif
   endif
 endfunction
 
 
-function! gitgutter#process_buffer(bufnr, force) abort
+function! minigutter#process_buffer(bufnr, force) abort
   " NOTE a:bufnr is not necessarily the current buffer.
 
-  if gitgutter#utility#is_active(a:bufnr)
+  if minigutter#utility#is_active(a:bufnr)
     if a:force || s:has_fresh_changes(a:bufnr)
 
       let diff = ''
       try
-        let diff = gitgutter#diff#run_diff(a:bufnr, 0)
-      catch /gitgutter not tracked/
-        call gitgutter#debug#log('Not tracked: '.gitgutter#utility#file(a:bufnr))
-      catch /gitgutter diff failed/
-        call gitgutter#debug#log('Diff failed: '.gitgutter#utility#file(a:bufnr))
-        call gitgutter#hunk#reset(a:bufnr)
+        let diff = minigutter#diff#run_diff(a:bufnr, 0)
+      catch /minigutter not tracked/
+        call minigutter#debug#log('Not tracked: '.minigutter#utility#file(a:bufnr))
+      catch /minigutter diff failed/
+        call minigutter#debug#log('Diff failed: '.minigutter#utility#file(a:bufnr))
+        call minigutter#hunk#reset(a:bufnr)
       endtry
 
       if diff != 'async'
-        call gitgutter#diff#handler(a:bufnr, diff)
+        call minigutter#diff#handler(a:bufnr, diff)
       endif
 
     endif
@@ -49,7 +49,7 @@ function! gitgutter#process_buffer(bufnr, force) abort
 endfunction
 
 
-function! gitgutter#disable() abort
+function! minigutter#disable() abort
   " get list of all buffers (across all tabs)
   let buflist = []
   for i in range(tabpagenr('$'))
@@ -63,36 +63,36 @@ function! gitgutter#disable() abort
     endif
   endfor
 
-  let g:gitgutter_enabled = 0
+  let g:minigutter_enabled = 0
 endfunction
 
-function! gitgutter#enable() abort
-  let g:gitgutter_enabled = 1
-  call gitgutter#all(1)
+function! minigutter#enable() abort
+  let g:minigutter_enabled = 1
+  call minigutter#all(1)
 endfunction
 
-function! gitgutter#toggle() abort
-  if g:gitgutter_enabled
-    call gitgutter#disable()
+function! minigutter#toggle() abort
+  if g:minigutter_enabled
+    call minigutter#disable()
   else
-    call gitgutter#enable()
+    call minigutter#enable()
   endif
 endfunction
 
 " }}}
 
 function! s:has_fresh_changes(bufnr) abort
-  return getbufvar(a:bufnr, 'changedtick') != gitgutter#utility#getbufvar(a:bufnr, 'tick')
+  return getbufvar(a:bufnr, 'changedtick') != minigutter#utility#getbufvar(a:bufnr, 'tick')
 endfunction
 
 function! s:reset_tick(bufnr) abort
-  call gitgutter#utility#setbufvar(a:bufnr, 'tick', 0)
+  call minigutter#utility#setbufvar(a:bufnr, 'tick', 0)
 endfunction
 
 function! s:clear(bufnr)
-  call gitgutter#sign#clear_signs(a:bufnr)
-  call gitgutter#sign#remove_dummy_sign(a:bufnr, 1)
-  call gitgutter#hunk#reset(a:bufnr)
+  call minigutter#sign#clear_signs(a:bufnr)
+  call minigutter#sign#remove_dummy_sign(a:bufnr, 1)
+  call minigutter#hunk#reset(a:bufnr)
   call s:reset_tick(a:bufnr)
 endfunction
 

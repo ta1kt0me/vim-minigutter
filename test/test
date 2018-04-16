@@ -6,8 +6,8 @@ export VIM_GITGUTTER_TEST=1
 
 $VIM -u NONE -U NONE -N                      \
   --cmd 'set rtp+=../'                       \
-  --cmd 'let g:gitgutter_async=0'            \
-  --cmd 'source ../plugin/gitgutter.vim'     \
+  --cmd 'let g:minigutter_async=0'            \
+  --cmd 'source ../plugin/minigutter.vim'     \
   -S runner.vim                              \
   test_*.vim                                 \
   $*

@@ -1,4 +1,4 @@
-## vim-gitgutter
+## vim-minigutter
 
 A Vim plugin which shows a git diff in the 'gutter' (sign column).  It shows which lines have been added, modified, or removed.  You can also preview, stage, and undo individual hunks.  The plugin also provides a hunk text object.
 
@@ -24,12 +24,12 @@ Features:
 Constraints:
 
 * Supports git only.  If you work with other version control systems, I recommend [vim-signify](https://github.com/mhinz/vim-signify).
-* Relies on the `FocusGained` event.  If your terminal doesn't report focus events, either use something like [Terminus][] or set `let g:gitgutter_terminal_reports_focus=0`.
+* Relies on the `FocusGained` event.  If your terminal doesn't report focus events, either use something like [Terminus][] or set `let g:minigutter_terminal_reports_focus=0`.
 
 
 ### Screenshot
 
-![screenshot](https://raw.github.com/airblade/vim-gitgutter/master/screenshot.png)
+![screenshot](https://raw.github.com/airblade/vim-minigutter/master/screenshot.png)
 
 In the screenshot above you can see:
 
@@ -42,13 +42,13 @@ In the screenshot above you can see:
 
 Before installation, please check your Vim supports signs by running `:echo has('signs')`.  `1` means you're all set; `0` means you need to install a Vim with signs support.  If you're compiling Vim yourself you need the 'big' or 'huge' feature set.  MacVim supports signs.
 
-You install vim-gitgutter like any other vim plugin.
+You install vim-minigutter like any other vim plugin.
 
 ##### Pathogen
 
 ```
 cd ~/.vim/bundle
-git clone git://github.com/airblade/vim-gitgutter.git
+git clone git://github.com/airblade/vim-minigutter.git
 ```
 
 ##### Voom
@@ -56,7 +56,7 @@ git clone git://github.com/airblade/vim-gitgutter.git
 Edit your plugin manifest (`voom edit`) and add:
 
 ```
-airblade/vim-gitgutter
+airblade/vim-minigutter
 ```
 
 ##### VimPlug
@@ -64,7 +64,7 @@ airblade/vim-gitgutter
 Place this in your .vimrc:
 
 ```viml
-Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-minigutter'
 ```
 
 Then run the following in Vim:
@@ -79,7 +79,7 @@ Then run the following in Vim:
 Place this in your .vimrc:
 
 ```viml
-NeoBundle 'airblade/vim-gitgutter'
+NeoBundle 'airblade/vim-minigutter'
 ```
 
 Then run the following in Vim:
@@ -91,11 +91,11 @@ Then run the following in Vim:
 
 ##### No plugin manager
 
-Copy vim-gitgutter's subdirectories into your vim configuration directory:
+Copy vim-minigutter's subdirectories into your vim configuration directory:
 
 ```
-cd /tmp && git clone git://github.com/airblade/vim-gitgutter.git
-cp -r vim-gitgutter/* ~/.vim/
+cd /tmp && git clone git://github.com/airblade/vim-minigutter.git
+cp -r vim-minigutter/* ~/.vim/
 ```
 
 See `:help add-global-plugin`.
@@ -112,7 +112,7 @@ You cannot unstage a staged hunk.
 
 #### Activation
 
-You can explicitly turn vim-gitgutter off and on (defaults to on):
+You can explicitly turn vim-minigutter off and on (defaults to on):
 
 * turn off with `:GitGutterDisable`
 * turn on with `:GitGutterEnable`
@@ -134,10 +134,10 @@ Note that if you have line highlighting on and signs off, you will have an empty
 
 If you switch off both line highlighting and signs, you won't see the sign column.  That is unless you configure the sign column always to be there (see Sign Column section).
 
-To keep your Vim snappy, vim-gitgutter will suppress the signs when a file has more than 500 changes.  As soon as the number of changes falls below the limit vim-gitgutter will show the signs again.  You can configure the threshold with:
+To keep your Vim snappy, vim-minigutter will suppress the signs when a file has more than 500 changes.  As soon as the number of changes falls below the limit vim-minigutter will show the signs again.  You can configure the threshold with:
 
 ```viml
-let g:gitgutter_max_signs = 500  " default value
+let g:minigutter_max_signs = 500  " default value
 ```
 
 #### Hunks
@@ -192,13 +192,13 @@ xmap ih <Plug>GitGutterTextObjectInnerVisual
 xmap ah <Plug>GitGutterTextObjectOuterVisual
 ```
 
-If you don't want vim-gitgutter to set up any mappings at all, use this:
+If you don't want vim-minigutter to set up any mappings at all, use this:
 
 ```viml
-let g:gitgutter_map_keys = 0
+let g:minigutter_map_keys = 0
 ```
 
-Finally, you can force vim-gitgutter to update its signs across all visible buffers with `:GitGutterAll`.
+Finally, you can force vim-minigutter to update its signs across all visible buffers with `:GitGutterAll`.
 
 See the customisation section below for how to change the defaults.
 
@@ -214,24 +214,24 @@ You can customise:
 * The base of the diff
 * Extra arguments for `git diff`
 * Key mappings
-* Whether or not vim-gitgutter is on initially (defaults to on)
+* Whether or not vim-minigutter is on initially (defaults to on)
 * Whether or not signs are shown (defaults to yes)
 * Whether or not line highlighting is on initially (defaults to off)
-* Whether or not vim-gitgutter runs in "realtime" (defaults to yes)
-* Whether or not vim-gitgutter runs eagerly (defaults to yes)
-* Whether or not vim-gitgutter runs asynchronously (defaults to yes)
+* Whether or not vim-minigutter runs in "realtime" (defaults to yes)
+* Whether or not vim-minigutter runs eagerly (defaults to yes)
+* Whether or not vim-minigutter runs asynchronously (defaults to yes)
 
-Please note that vim-gitgutter won't override any colours or highlights you've set in your colorscheme.
+Please note that vim-minigutter won't override any colours or highlights you've set in your colorscheme.
 
 
 #### Sign column
 
-By default vim-gitgutter will make the sign column look like the line number column.
+By default vim-minigutter will make the sign column look like the line number column.
 
-To customise your sign column's background color, first tell vim-gitgutter to leave it alone:
+To customise your sign column's background color, first tell vim-minigutter to leave it alone:
 
 ```viml
-let g:gitgutter_override_sign_column_highlight = 0
+let g:minigutter_override_sign_column_highlight = 0
 ```
 
 And then either update your colorscheme's `SignColumn` highlight group or set it in your vimrc:
@@ -247,7 +247,7 @@ By default the sign column will appear when there are signs to show and disappea
 if exists('&signcolumn')  " Vim 7.4.2201
   set signcolumn=yes
 else
-  let g:gitgutter_sign_column_always = 1
+  let g:minigutter_sign_column_always = 1
 endif
 ```
 
@@ -268,11 +268,11 @@ You can either set these with `highlight GitGutterAdd {key}={arg}...` or link th
 To customise the symbols, add the following to your `~/.vimrc`:
 
 ```viml
-let g:gitgutter_sign_added = 'xx'
-let g:gitgutter_sign_modified = 'yy'
-let g:gitgutter_sign_removed = 'zz'
-let g:gitgutter_sign_removed_first_line = '^^'
-let g:gitgutter_sign_modified_removed = 'ww'
+let g:minigutter_sign_added = 'xx'
+let g:minigutter_sign_modified = 'yy'
+let g:minigutter_sign_removed = 'zz'
+let g:minigutter_sign_removed_first_line = '^^'
+let g:minigutter_sign_modified_removed = 'ww'
 ```
 
 
@@ -293,7 +293,7 @@ GitGutterChangeDeleteLine " default: links to GitGutterChangeLineDefault, i.e. D
 By default buffers are diffed against the index.  However you can diff against any commit by setting:
 
 ```viml
-let g:gitgutter_diff_base = '<commit SHA>'
+let g:minigutter_diff_base = '<commit SHA>'
 ```
 
 
@@ -302,7 +302,7 @@ let g:gitgutter_diff_base = '<commit SHA>'
 If you want to pass extra arguments to `git diff`, for example to ignore whitespace, do so like this:
 
 ```viml
-let g:gitgutter_diff_args = '-w'
+let g:minigutter_diff_args = '-w'
 ```
 
 #### Key mappings
@@ -310,7 +310,7 @@ let g:gitgutter_diff_args = '-w'
 To disable all key mappings:
 
 ```viml
-let g:gitgutter_map_keys = 0
+let g:minigutter_map_keys = 0
 ```
 
 See above for configuring maps for hunk-jumping and staging/undoing.
@@ -318,26 +318,26 @@ See above for configuring maps for hunk-jumping and staging/undoing.
 
 #### Use a custom `grep` command
 
-If you use an alternative to grep, you can tell vim-gitgutter to use it here.
+If you use an alternative to grep, you can tell vim-minigutter to use it here.
 
 ```viml
 " Default:
-let g:gitgutter_grep = 'grep'
+let g:minigutter_grep = 'grep'
 ```
 
-#### To turn off vim-gitgutter by default
+#### To turn off vim-minigutter by default
 
-Add `let g:gitgutter_enabled = 0` to your `~/.vimrc`.
+Add `let g:minigutter_enabled = 0` to your `~/.vimrc`.
 
 
 #### To turn off signs by default
 
-Add `let g:gitgutter_signs = 0` to your `~/.vimrc`.
+Add `let g:minigutter_signs = 0` to your `~/.vimrc`.
 
 
 #### To turn on line highlighting by default
 
-Add `let g:gitgutter_highlight_lines = 1` to your `~/.vimrc`.
+Add `let g:minigutter_highlight_lines = 1` to your `~/.vimrc`.
 
 
 #### To turn off asynchronous updates
@@ -345,7 +345,7 @@ Add `let g:gitgutter_highlight_lines = 1` to your `~/.vimrc`.
 By default diffs are run asynchronously.  To run diffs synchronously instead:
 
 ```viml
-let g:gitgutter_async = 0
+let g:minigutter_async = 0
 ```
 
 
@@ -466,8 +466,8 @@ nmap <silent> [c :call PrevHunkAllBuffers()<CR>
 Add this to your vim configuration (in an `/after/plugin` directory):
 
 ```viml
-" .vim/after/plugin/gitgutter.vim
-autocmd! gitgutter CursorHold,CursorHoldI
+" .vim/after/plugin/minigutter.vim
+autocmd! minigutter CursorHold,CursorHoldI
 ```
 
 
@@ -481,7 +481,7 @@ Your colorscheme is configuring the `SignColumn` highlight group weirdly.  Pleas
 
 > What happens if I also use another plugin which uses signs (e.g. Syntastic)?
 
-Vim only allows one sign per line.  Before adding a sign to a line, vim-gitgutter checks whether a sign has already been added by somebody else.  If so it doesn't do anything.  In other words vim-gitgutter won't overwrite another plugin's signs.  It also won't remove another plugin's signs.
+Vim only allows one sign per line.  Before adding a sign to a line, vim-minigutter checks whether a sign has already been added by somebody else.  If so it doesn't do anything.  In other words vim-minigutter won't overwrite another plugin's signs.  It also won't remove another plugin's signs.
 
 
 ### Troubleshooting
@@ -490,7 +490,7 @@ Vim only allows one sign per line.  Before adding a sign to a line, vim-gitgutte
 
 Here are some things you can check:
 
-* Try adding `let g:gitgutter_grep=''` to your vimrc.  If it works, the problem is grep producing non-plain output; e.g. ANSI escape codes or colours.
+* Try adding `let g:minigutter_grep=''` to your vimrc.  If it works, the problem is grep producing non-plain output; e.g. ANSI escape codes or colours.
 * Verify `:echo system("git --version")` succeeds.
 * Verify your git config is compatible with the version of git returned by the command above.
 * Verify your Vim supports signs (`:echo has('signs')` should give `1`).
@@ -506,7 +506,7 @@ Here are some things you can check:
 
 #### When signs don't update after focusing Vim
 
-* Your terminal probably isn't reporting focus events.  Either try installing [Terminus][] or set `let g:gitgutter_terminal_reports_focus=0`.
+* Your terminal probably isn't reporting focus events.  Either try installing [Terminus][] or set `let g:minigutter_terminal_reports_focus=0`.
 
 
 ### Shameless Plug

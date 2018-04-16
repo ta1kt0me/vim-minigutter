@@ -10,55 +10,55 @@ let s:dummy_sign_id = s:first_sign_id - 1
 let s:supports_star = v:version > 703 || (v:version == 703 && has("patch596"))
 
 
-function! gitgutter#sign#enable() abort
-  let old_signs = g:gitgutter_signs
+function! minigutter#sign#enable() abort
+  let old_signs = g:minigutter_signs
 
-  let g:gitgutter_signs = 1
-  call gitgutter#highlight#define_sign_text_highlights()
+  let g:minigutter_signs = 1
+  call minigutter#highlight#define_sign_text_highlights()
 
-  if !old_signs && !g:gitgutter_highlight_lines
-    call gitgutter#all(1)
+  if !old_signs && !g:minigutter_highlight_lines
+    call minigutter#all(1)
   endif
 endfunction
 
-function! gitgutter#sign#disable() abort
-  let g:gitgutter_signs = 0
-  call gitgutter#highlight#define_sign_text_highlights()
+function! minigutter#sign#disable() abort
+  let g:minigutter_signs = 0
+  call minigutter#highlight#define_sign_text_highlights()
 
-  if !g:gitgutter_highlight_lines
-    call gitgutter#sign#clear_signs(bufnr(''))
-    call gitgutter#sign#remove_dummy_sign(bufnr(''), 0)
+  if !g:minigutter_highlight_lines
+    call minigutter#sign#clear_signs(bufnr(''))
+    call minigutter#sign#remove_dummy_sign(bufnr(''), 0)
   endif
 endfunction
 
-function! gitgutter#sign#toggle() abort
-  if g:gitgutter_signs
-    call gitgutter#sign#disable()
+function! minigutter#sign#toggle() abort
+  if g:minigutter_signs
+    call minigutter#sign#disable()
   else
-    call gitgutter#sign#enable()
+    call minigutter#sign#enable()
   endif
 endfunction
 
 
-" Removes gitgutter's signs (excluding dummy sign) from the buffer being processed.
-function! gitgutter#sign#clear_signs(bufnr) abort
+" Removes minigutter's signs (excluding dummy sign) from the buffer being processed.
+function! minigutter#sign#clear_signs(bufnr) abort
   call s:find_current_signs(a:bufnr)
 
-  let sign_ids = map(values(gitgutter#utility#getbufvar(a:bufnr, 'gitgutter_signs')), 'v:val.id')
+  let sign_ids = map(values(minigutter#utility#getbufvar(a:bufnr, 'minigutter_signs')), 'v:val.id')
   call s:remove_signs(a:bufnr, sign_ids, 1)
-  call gitgutter#utility#setbufvar(a:bufnr, 'gitgutter_signs', {})
+  call minigutter#utility#setbufvar(a:bufnr, 'minigutter_signs', {})
 endfunction
 
 
-" Updates gitgutter's signs in the buffer being processed.
+" Updates minigutter's signs in the buffer being processed.
 "
 " modified_lines: list of [<line_number (number)>, <name (string)>]
 " where name = 'added|removed|modified|modified_removed'
-function! gitgutter#sign#update_signs(bufnr, modified_lines) abort
+function! minigutter#sign#update_signs(bufnr, modified_lines) abort
   call s:find_current_signs(a:bufnr)
 
-  let new_gitgutter_signs_line_numbers = map(copy(a:modified_lines), 'v:val[0]')
-  let obsolete_signs = s:obsolete_gitgutter_signs_to_remove(a:bufnr, new_gitgutter_signs_line_numbers)
+  let new_minigutter_signs_line_numbers = map(copy(a:modified_lines), 'v:val[0]')
+  let obsolete_signs = s:obsolete_minigutter_signs_to_remove(a:bufnr, new_minigutter_signs_line_numbers)
 
   let flicker_possible = s:remove_all_old_signs && !empty(a:modified_lines)
   if flicker_possible
@@ -66,25 +66,25 @@ function! gitgutter#sign#update_signs(bufnr, modified_lines) abort
   endif
 
   call s:remove_signs(a:bufnr, obsolete_signs, s:remove_all_old_signs)
-  call s:upsert_new_gitgutter_signs(a:bufnr, a:modified_lines)
+  call s:upsert_new_minigutter_signs(a:bufnr, a:modified_lines)
 
   if flicker_possible
-    call gitgutter#sign#remove_dummy_sign(a:bufnr, 0)
+    call minigutter#sign#remove_dummy_sign(a:bufnr, 0)
   endif
 endfunction
 
 
 function! s:add_dummy_sign(bufnr) abort
-  if !gitgutter#utility#getbufvar(a:bufnr, 'dummy_sign')
+  if !minigutter#utility#getbufvar(a:bufnr, 'dummy_sign')
     execute "sign place" s:dummy_sign_id "line=" . 9999 "name=GitGutterDummy buffer=" . a:bufnr
-    call gitgutter#utility#setbufvar(a:bufnr, 'dummy_sign', 1)
+    call minigutter#utility#setbufvar(a:bufnr, 'dummy_sign', 1)
   endif
 endfunction
 
-function! gitgutter#sign#remove_dummy_sign(bufnr, force) abort
-  if gitgutter#utility#getbufvar(a:bufnr, 'dummy_sign') && (a:force || !g:gitgutter_sign_column_always)
+function! minigutter#sign#remove_dummy_sign(bufnr, force) abort
+  if minigutter#utility#getbufvar(a:bufnr, 'dummy_sign') && (a:force || !g:minigutter_sign_column_always)
     execute "sign unplace" s:dummy_sign_id "buffer=" . a:bufnr
-    call gitgutter#utility#setbufvar(a:bufnr, 'dummy_sign', 0)
+    call minigutter#utility#setbufvar(a:bufnr, 'dummy_sign', 0)
   endif
 endfunction
 
@@ -95,7 +95,7 @@ endfunction
 
 
 function! s:find_current_signs(bufnr) abort
-  let gitgutter_signs = {}  " <line_number (string)>: {'id': <id (number)>, 'name': <name (string)>}
+  let minigutter_signs = {}  " <line_number (string)>: {'id': <id (number)>, 'name': <name (string)>}
   let other_signs = []      " [<line_number (number),...]
   let dummy_sign_placed = 0
 
@@ -117,31 +117,31 @@ function! s:find_current_signs(bufnr) abort
         " Remove orphaned signs (signs placed on lines which have been deleted).
         " (When a line is deleted its sign lingers.  Subsequent lines' signs'
         " line numbers are decremented appropriately.)
-        if has_key(gitgutter_signs, line_number)
-          execute "sign unplace" gitgutter_signs[line_number].id
+        if has_key(minigutter_signs, line_number)
+          execute "sign unplace" minigutter_signs[line_number].id
         endif
-        let gitgutter_signs[line_number] = {'id': id, 'name': name}
+        let minigutter_signs[line_number] = {'id': id, 'name': name}
       else
         call add(other_signs, line_number)
       endif
     end
   endfor
 
-  call gitgutter#utility#setbufvar(a:bufnr, 'dummy_sign', dummy_sign_placed)
-  call gitgutter#utility#setbufvar(a:bufnr, 'gitgutter_signs', gitgutter_signs)
-  call gitgutter#utility#setbufvar(a:bufnr, 'other_signs', other_signs)
+  call minigutter#utility#setbufvar(a:bufnr, 'dummy_sign', dummy_sign_placed)
+  call minigutter#utility#setbufvar(a:bufnr, 'minigutter_signs', minigutter_signs)
+  call minigutter#utility#setbufvar(a:bufnr, 'other_signs', other_signs)
 endfunction
 
 
 " Returns a list of [<id (number)>, ...]
 " Sets `s:remove_all_old_signs` as a side-effect.
-function! s:obsolete_gitgutter_signs_to_remove(bufnr, new_gitgutter_signs_line_numbers) abort
+function! s:obsolete_minigutter_signs_to_remove(bufnr, new_minigutter_signs_line_numbers) abort
   let signs_to_remove = []  " list of [<id (number)>, ...]
   let remove_all_signs = 1
-  let old_gitgutter_signs = gitgutter#utility#getbufvar(a:bufnr, 'gitgutter_signs')
-  for line_number in keys(old_gitgutter_signs)
-    if index(a:new_gitgutter_signs_line_numbers, str2nr(line_number)) == -1
-      call add(signs_to_remove, old_gitgutter_signs[line_number].id)
+  let old_minigutter_signs = minigutter#utility#getbufvar(a:bufnr, 'minigutter_signs')
+  for line_number in keys(old_minigutter_signs)
+    if index(a:new_minigutter_signs_line_numbers, str2nr(line_number)) == -1
+      call add(signs_to_remove, old_minigutter_signs[line_number].id)
     else
       let remove_all_signs = 0
     endif
@@ -152,8 +152,8 @@ endfunction
 
 
 function! s:remove_signs(bufnr, sign_ids, all_signs) abort
-  if a:all_signs && s:supports_star && empty(gitgutter#utility#getbufvar(a:bufnr, 'other_signs'))
-    let dummy_sign_present = gitgutter#utility#getbufvar(a:bufnr, 'dummy_sign')
+  if a:all_signs && s:supports_star && empty(minigutter#utility#getbufvar(a:bufnr, 'other_signs'))
+    let dummy_sign_present = minigutter#utility#getbufvar(a:bufnr, 'dummy_sign')
     execute "sign unplace * buffer=" . a:bufnr
     if dummy_sign_present
       execute "sign place" s:dummy_sign_id "line=" . 9999 "name=GitGutterDummy buffer=" . a:bufnr
@@ -166,26 +166,26 @@ function! s:remove_signs(bufnr, sign_ids, all_signs) abort
 endfunction
 
 
-function! s:upsert_new_gitgutter_signs(bufnr, modified_lines) abort
-  let other_signs         = gitgutter#utility#getbufvar(a:bufnr, 'other_signs')
-  let old_gitgutter_signs = gitgutter#utility#getbufvar(a:bufnr, 'gitgutter_signs')
+function! s:upsert_new_minigutter_signs(bufnr, modified_lines) abort
+  let other_signs         = minigutter#utility#getbufvar(a:bufnr, 'other_signs')
+  let old_minigutter_signs = minigutter#utility#getbufvar(a:bufnr, 'minigutter_signs')
 
   for line in a:modified_lines
     let line_number = line[0]  " <number>
     if index(other_signs, line_number) == -1  " don't clobber others' signs
       let name = s:highlight_name_for_change(line[1])
-      if !has_key(old_gitgutter_signs, line_number)  " insert
+      if !has_key(old_minigutter_signs, line_number)  " insert
         let id = s:next_sign_id()
         execute "sign place" id "line=" . line_number "name=" . name "buffer=" . a:bufnr
       else  " update if sign has changed
-        let old_sign = old_gitgutter_signs[line_number]
+        let old_sign = old_minigutter_signs[line_number]
         if old_sign.name !=# name
           execute "sign place" old_sign.id "name=" . name "buffer=" . a:bufnr
         end
       endif
     endif
   endfor
-  " At this point b:gitgutter_gitgutter_signs is out of date.
+  " At this point b:minigutter_minigutter_signs is out of date.
 endfunction
 
 
@@ -197,7 +197,7 @@ endfunction
 
 
 " Only for testing.
-function! gitgutter#sign#reset()
+function! minigutter#sign#reset()
   let s:next_sign_id  = s:first_sign_id
 endfunction
 

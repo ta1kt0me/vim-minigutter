@@ -31,7 +31,7 @@ function s:git_diff_staged()
   return split(system('git diff -U0 --staged fixture.txt'), '\n')
 endfunction
 
-function s:trigger_gitgutter()
+function s:trigger_minigutter()
   doautocmd CursorHold
 endfunction
 
@@ -48,7 +48,7 @@ function SetUp()
         \ " && git config diff.mnemonicPrefix false")
   execute ':cd' s:test_repo
   edit! fixture.txt
-  call gitgutter#sign#reset()
+  call minigutter#sign#reset()
 endfunction
 
 function TearDown()
@@ -69,7 +69,7 @@ endfunction
 
 function Test_add_lines()
   normal ggo*
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   let expected = ["line=2  id=3000  name=GitGutterLineAdded"]
   call assert_equal(expected, s:signs('fixture.txt'))
@@ -81,7 +81,7 @@ function Test_add_lines_fish()
   set shell=/usr/local/bin/fish
 
   normal ggo*
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   let expected = ["line=2  id=3000  name=GitGutterLineAdded"]
   call assert_equal(expected, s:signs('fixture.txt'))
@@ -92,7 +92,7 @@ endfunction
 
 function Test_modify_lines()
   normal ggi*
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   let expected = ["line=1  id=3000  name=GitGutterLineModified"]
   call assert_equal(expected, s:signs('fixture.txt'))
@@ -101,7 +101,7 @@ endfunction
 
 function Test_remove_lines()
   execute '5d'
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   let expected = ["line=4  id=3000  name=GitGutterLineRemoved"]
   call assert_equal(expected, s:signs('fixture.txt'))
@@ -110,7 +110,7 @@ endfunction
 
 function Test_remove_first_lines()
   execute '1d'
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   let expected = ["line=1  id=3000  name=GitGutterLineRemovedFirstLine"]
   call assert_equal(expected, s:signs('fixture.txt'))
@@ -120,7 +120,7 @@ endfunction
 function Test_edit_file_with_same_name_as_a_branch()
   normal 5Gi*
   call system('git checkout -b fixture.txt')
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   let expected = ["line=5  id=3000  name=GitGutterLineModified"]
   call assert_equal(expected, s:signs('fixture.txt'))
@@ -132,7 +132,7 @@ function Test_file_added_to_git()
   call system('touch '.tmpfile.' && git add '.tmpfile)
   execute 'edit '.tmpfile
   normal ihello
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   let expected = ["line=1  id=3000  name=GitGutterLineAdded"]
   call assert_equal(expected, s:signs('fileAddedToGit.tmp'))
@@ -143,7 +143,7 @@ function Test_filename_with_equals()
   call system('touch =fixture=.txt && git add =fixture=.txt')
   edit =fixture=.txt
   normal ggo*
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   let expected = [
         \ 'line=1  id=3000  name=GitGutterLineAdded',
@@ -157,7 +157,7 @@ function Test_filename_with_square_brackets()
   call system('touch fix[tu]re.txt && git add fix[tu]re.txt')
   edit fix[tu]re.txt
   normal ggo*
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   let expected = [
         \ 'line=1  id=3000  name=GitGutterLineAdded',
@@ -173,7 +173,7 @@ function Test_follow_symlink()
   call system('ln -nfs fixture.txt '.tmp)
   execute 'edit '.tmp
   6d
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   let expected = ['line=5  id=3000  name=GitGutterLineRemoved']
   call assert_equal(expected, s:signs('symlink'))
@@ -188,7 +188,7 @@ function Test_keep_alt()
   call assert_equal('',            bufname('#'))
 
   normal ggx
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   call assert_equal('', bufname('#'))
 endfunction
@@ -198,7 +198,7 @@ function Test_keep_modified()
   normal 5Go*
   call assert_equal(1, getbufvar('', '&modified'))
 
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   call assert_equal(1, getbufvar('', '&modified'))
 endfunction
@@ -209,7 +209,7 @@ function Test_keep_op_marks()
   call assert_equal([0,6,1,0], getpos("'["))
   call assert_equal([0,6,2,0], getpos("']"))
 
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   call assert_equal([0,6,1,0], getpos("'["))
   call assert_equal([0,6,2,0], getpos("']"))
@@ -223,9 +223,9 @@ endfunction
 
 function Test_orphaned_signs()
   execute "normal 5GoX\<CR>Y"
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
   6d
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   let expected = ['line=6  id=3001  name=GitGutterLineAdded']
   call assert_equal(expected, s:signs('fixture.txt'))
@@ -246,7 +246,7 @@ function Test_untracked_file_within_repo()
   call system('touch '.tmp)
   execute 'edit '.tmp
   normal ggo*
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   call assert_equal([], s:signs(tmp))
 
@@ -259,7 +259,7 @@ function Test_untracked_file_square_brackets_within_repo()
   call system('touch '.tmp)
   execute 'edit '.tmp
   normal ggo*
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   call assert_equal([], s:signs(tmp))
 
@@ -398,9 +398,9 @@ function Test_undo_nearby_hunk()
   execute "normal! 2Gox\<CR>y\<CR>z"
   normal 2jdd
   normal k
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
   GitGutterUndoHunk
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   let expected = [
         \ 'line=3  id=3000  name=GitGutterLineAdded',
@@ -435,7 +435,7 @@ function Test_write_option()
   set nowrite
 
   normal ggo*
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   let expected = ["line=2  id=3000  name=GitGutterLineAdded"]
   call assert_equal(expected, s:signs('fixture.txt'))
@@ -446,9 +446,9 @@ endfunction
 
 function Test_inner_text_object()
   execute "normal! 2Gox\<CR>y\<CR>z\<CR>\<CR>"
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
   normal dic
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   call assert_equal([], s:signs('fixture.txt'))
   call assert_equal(readfile('fixture.txt'), getline(1,'$'))
@@ -456,7 +456,7 @@ function Test_inner_text_object()
   " Excludes trailing lines
   normal 9Gi*
   normal 10Gi*
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
   execute "normal vic\<Esc>"
   call assert_equal([9, 10], [line("'<"), line("'>")])
 endfunction
@@ -464,9 +464,9 @@ endfunction
 
 function Test_around_text_object()
   execute "normal! 2Gox\<CR>y\<CR>z\<CR>\<CR>"
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
   normal dac
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   call assert_equal([], s:signs('fixture.txt'))
   call assert_equal(readfile('fixture.txt'), getline(1,'$'))
@@ -474,24 +474,24 @@ function Test_around_text_object()
   " Includes trailing lines
   normal 9Gi*
   normal 10Gi*
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
   execute "normal vac\<Esc>"
   call assert_equal([9, 11], [line("'<"), line("'>")])
 endfunction
 
 
 function Test_user_autocmd()
-  autocmd User GitGutter let s:autocmd_user = g:gitgutter_hook_context.bufnr
+  autocmd User GitGutter let s:autocmd_user = g:minigutter_hook_context.bufnr
 
   " Verify not fired when nothing changed.
   let s:autocmd_user = 0
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
   call assert_equal(0, s:autocmd_user)
 
   " Verify fired when there was a change.
   normal ggo*
   let bufnr = bufnr('')
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
   call assert_equal(bufnr, s:autocmd_user)
 endfunction
 
@@ -517,7 +517,7 @@ function Test_fix_file_references()
         \ '+x'
         \ ], "\n")."\n"
 
-  call assert_equal(expected, gitgutter#hunk#fix_file_references(filepath, hunk_diff))
+  call assert_equal(expected, minigutter#hunk#fix_file_references(filepath, hunk_diff))
 
   " diff.mnemonicPrefix; spaces in filename
   let hunk_diff = join([
@@ -539,7 +539,7 @@ function Test_fix_file_references()
         \ '+x'
         \ ], "\n")."\n"
 
-  call assert_equal(expected, gitgutter#hunk#fix_file_references(filepath, hunk_diff))
+  call assert_equal(expected, minigutter#hunk#fix_file_references(filepath, hunk_diff))
 
   " Backslashes in filename; quotation marks
   let hunk_diff = join([
@@ -561,7 +561,7 @@ function Test_fix_file_references()
         \ '+x'
         \ ], "\n")."\n"
 
-  call assert_equal(expected, gitgutter#hunk#fix_file_references(filepath, hunk_diff))
+  call assert_equal(expected, minigutter#hunk#fix_file_references(filepath, hunk_diff))
 endfunction
 
 
@@ -569,7 +569,7 @@ function Test_encoding()
   call system('cp ../cp932.txt . && git add cp932.txt')
   edit ++enc=cp932 cp932.txt
 
-  call s:trigger_gitgutter()
+  call s:trigger_minigutter()
 
   call assert_equal([], s:signs('cp932.txt'))
 endfunction

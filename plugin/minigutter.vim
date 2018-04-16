@@ -17,7 +17,7 @@ sign define RemoveGit text=- texthl=RemoveCharHighlight
 sign define ModifyGit text=+ texthl=ModifyCharHighlight
 sign define ModifyRemoveGit text=+- texthl=ModifyCharHighlight
 
-function! s:execute_diff() abort
+function! minigutter#job_execute() abort
   let command = ['sh', '-c', "git --no-pager diff -U0 --no-color -- ".expand("%:p")." | rg \"^@@ \""]
   let options = {
         \   'stdoutbuffer': [],
@@ -39,10 +39,10 @@ function! s:on_stderr(_channel, msg) abort
 endfunction
 
 function! s:on_exit(_channel) dict abort
-  call s:sign(self.stdoutbuffer)
+  call minigutter#sign_update(self.stdoutbuffer)
 endfunction
 
-function! s:sign(data) abort
+function! minigutter#sign_update(data) abort
   let modifications = []
   for line in a:data
     let matches = matchlist(line, '^@@ -\(\d\+\),\?\(\d*\) +\(\d\+\),\?\(\d*\) @@')
@@ -140,7 +140,7 @@ function! s:process_modified_and_removed(modifications, from_count, to_count, to
 endfunction
 
 augroup minigutter
-  autocmd FileChangedShellPost,CursorHold,BufRead,BufWritepost * :call s:execute_diff()
+  autocmd FileChangedShellPost,CursorHold,BufRead,BufWritepost * :call minigutter#job_execute()
 augroup END
 
 " }}}

@@ -18,6 +18,12 @@ sign define ModifyGit text=+ texthl=ModifyCharHighlight
 sign define ModifyRemoveGit text=+- texthl=ModifyCharHighlight
 
 function! minigutter#job_execute() abort
+  let is_git_repo = system("git rev-parse --is-inside-work-tree 2>/dev/null")
+
+  if len(is_git_repo) == 0
+    return
+  endif
+
   let command = ['sh', '-c', "git --no-pager diff -U0 --no-color -- ".expand("%:p")." | rg \"^@@ \""]
   let options = {
         \   'stdoutbuffer': [],

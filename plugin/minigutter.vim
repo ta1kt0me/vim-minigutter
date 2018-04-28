@@ -146,7 +146,7 @@ function! s:process_modified_and_removed(modifications, from_count, to_count, to
 endfunction
 
 augroup minigutter
-  autocmd FileChangedShellPost,CursorHold,BufRead,BufWritepost * :call minigutter#job_execute()
+  autocmd FileChangedShellPost,BufRead,BufWritepost * :call minigutter#job_execute()
 augroup END
 
 " }}}
